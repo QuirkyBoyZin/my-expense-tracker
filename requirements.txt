@@ -1,0 +1,5 @@
+- Create a virtual environment for python 3.13.9 
+- Install  telegram-bot's   library 
+- Install  google-sheets' library 
+- use .env to store API keys ( telegram and google sheets )
+- use credentials.json to store Google/OAuth credentials

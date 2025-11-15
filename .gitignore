@@ -1,0 +1,8 @@
+.venv
+.env
+credentials.json
+.mypy_cache
+src\g-sheets\__pycache__
+src\t-bot\__pycache__
+src/g-sheets/models/__pycache__/
+src/t-bot/models/__pycache__/
