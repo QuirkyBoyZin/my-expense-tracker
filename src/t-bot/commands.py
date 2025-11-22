@@ -64,30 +64,13 @@ def handle_add(response):
 # /view
 # -------------------------------------------------------------
 def handle_view(response, L):
-    """
-    Shows indexed list of expenses for a given date.
-    Inputs:
-        - response (string)
-        - L (nested list) e.g. [ [Expense...], [Expense...] ]
-
-    Output format:
-        1. Food noodle 2.5
-        2. Drinks coke 1.25
-    """
-
     if not L:
-        return "No expenses found for this date."
-
+        return "No expenses found."
     output = ""
-
     for index, item in enumerate(L, start=1):
-        # each item is a nested list like [ExpenseObj]
         expense = item[0]
-
         output += f"{index}. {expense.category} {expense.name} {expense.price}\n"
-
     return output.strip()
-
 
 # -------------------------------------------------------------
 # /change
