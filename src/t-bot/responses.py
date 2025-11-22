@@ -1,0 +1,5 @@
+SUCCESS = "Done"
+EMPTY = "No items"
+CHANGED = "Updated"
+REMOVED = "Removed"
+ENDED = "Goodbye" 
