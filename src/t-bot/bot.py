@@ -1,7 +1,12 @@
 import telebot
 import responses
+import os
+from dotenv import load_dotenv 
 
-bot = telebot.TeleBot("8265768086:AAHLg2UbVLfDNcKjQRib60scX9X-3hJRTVo")
+load_dotenv()
+TOKEN         = os.getenv("BOT_TOKEN")
+BOT_USERNAME = os.getenv("BOT_USERNAME")
+bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['add'])
 def add(message):
