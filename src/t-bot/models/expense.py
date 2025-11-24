@@ -9,7 +9,6 @@ class Expense(object):
             raise TypeError(f"Only strings are allowed\n~~~~{name} is not allowed~~~~")
         elif not isinstance(self.price, float):
             raise TypeError(f"Only floats are allowed\n~~~~{price} is not allowed~~~~")
-        return self.type
     def get_type(self):
         return self.type
     def get_name(self):
