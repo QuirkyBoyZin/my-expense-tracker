@@ -14,6 +14,7 @@ load_dotenv()
 TOKEN         = os.getenv("BOT_TOKEN")
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 bot = telebot.TeleBot(TOKEN)
+
 # This stores all expense entries
 # Format: [date, time, Expense object]
 expenses = []

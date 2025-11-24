@@ -6,18 +6,13 @@ from models.expense import Expense
 # /help
 # -------------------------------------------------------------
 def handle_help(response):
-    """
-    Returns a list of all commands and their usage.
-    """
-
     return (
-        "/help - Show all commands\n"
+        "/help - Show all commands and descriptions\n"
         "/add <category> <name> <price> - Add an expense\n"
-        "       Example: /add food burger 3.5\n"
-        "/view <date> - View all expenses from a specific date\n"
-        "       Example: /view 2024-11-22\n"
-        "/change - Change an existing expense\n"
-        "/remove - Remove an expense\n"
+        "/view <date> - View expenses (defaults to today)\n"
+        "/change <index> <name|price> - Change expense details\n"
+        "/remove <name> - Remove an expense by name\n"
+        "/end - End session\n"
     )
 
 
@@ -25,21 +20,10 @@ def handle_help(response):
 # /add
 # -------------------------------------------------------------
 def handle_add(response):
-    """
-    Handles adding an expense.
-    Expected format:
-        /add <category> <name> <price>
-    Returns:
-        [date, time, Expense(category, name, price)]
-    """
-
     args = response.split()
 
     if len(args) < 4:
-        return (
-            "Missing arguments! Please follow:\n"
-            "/add <category> <name> <price>"
-        )
+        return "Missing arguments! Format: /add <category> <name> <price>"
 
     category = args[1]
     name = args[2]
@@ -50,41 +34,25 @@ def handle_add(response):
     except:
         return "Price must be a number!"
 
-    # Get date and time
     now = datetime.now()
     date = now.strftime("%Y-%m-%d")
     time = now.strftime("%H:%M:%S")
 
-    expense_obj = Expense(category, name, price)
-
-    return [date, time, expense_obj]
+    # Return list containing date, time and object ✔
+    return [date, time, Expense(category, name, price)]
 
 
 # -------------------------------------------------------------
 # /view
 # -------------------------------------------------------------
-def handle_view(response, L):
-    """
-    Shows indexed list of expenses for a given date.
-    Inputs:
-        - response (string)
-        - L (nested list) e.g. [ [Expense...], [Expense...] ]
-
-    Output format:
-        1. Food noodle 2.5
-        2. Drinks coke 1.25
-    """
-
-    if not L:
-        return "No expenses found for this date."
+def handle_view(response, all_expenses):
+    if not all_expenses:
+        return "No expenses found."
 
     output = ""
-
-    for index, item in enumerate(L, start=1):
-        # each item is a nested list like [ExpenseObj]
-        expense = item[0]
-
-        output += f"{index}. {expense.category} {expense.name} {expense.price}\n"
+    for i, item in enumerate(all_expenses, start=1):
+        exp = item[2]   # index 2 = Expense object
+        output += f"{i}. {exp.get_type()} {exp.get_name()} {exp.get_price()}$\n"
 
     return output.strip()
 
@@ -92,70 +60,46 @@ def handle_view(response, L):
 # -------------------------------------------------------------
 # /change
 # -------------------------------------------------------------
-def handle_change(response, L):
-    """
-    Allows the user to modify an item.
-    Steps:
-        - Uses /view list to show items
-        - User picks an index
-        - Bot asks: "change name or price?"
-        - Returns: (index, field_to_change)
-    """
-
-    # Expecting response like: "/change 2 name"
+def handle_change(response, all_expenses):
     args = response.split()
 
-    if len(args) < 2:
-        return "Please specify which item number to change."
+    if len(args) < 3:
+        return f"{handle_view(response, all_expenses)}\nUsage: /change <index> <name|price>"
 
-    # user chooses index
+    # convert index to int
     try:
         index = int(args[1])
     except:
-        return "Invalid index. Please enter a number."
+        return "Index must be a number."
 
-    if index < 1 or index > len(L):
+    if index < 1 or index > len(all_expenses):
         return "Index out of range."
-
-    if len(args) == 2:
-        return (
-            "What do you want to change?\n"
-            "Type one: name or price"
-        )
 
     field = args[2].lower()
 
     if field not in ["name", "price"]:
-        return "Invalid option. Choose 'name' or 'price'."
+        return "Choose either 'name' or 'price'."
 
-    # return the item index and field to change
+    # return valid output for bot.py
     return (index, field)
+    
 
 
 # -------------------------------------------------------------
 # /remove
 # -------------------------------------------------------------
-def handle_remove(response, L):
-    """
-    Removes an item from the list.
-    Returns:
-        (index, removed_item)
-    """
-
+def handle_remove(response, all_expenses):
     args = response.split()
 
     if len(args) < 2:
-        return "Please specify which item number to remove."
+        return "Usage: /remove <name>"
 
-    try:
-        index = int(args[1])
-    except:
-        return "Invalid index."
+    name = args[1].lower()
 
-    if index < 1 or index > len(L):
-        return "Index out of range."
+    for index, item in enumerate(all_expenses):
+        exp = item[2]
 
-    removed_item = L[index - 1][0]
+        if exp.name.lower() == name:
+            return (index, exp)
 
-    # Return index + removed item
-    return (index, removed_item)
+    return "No item with that name found."
