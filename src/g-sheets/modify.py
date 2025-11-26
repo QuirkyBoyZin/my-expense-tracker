@@ -1,5 +1,4 @@
 import os
-import retrieve
 import gspread
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
@@ -17,14 +16,16 @@ workbook = client.open_by_key(sheet_id)
 sheet_gspread = workbook.worksheet("expense_tracker")
 
 
-def add_sheet (type,name,price):
+def add_row (type,name,price):
+    print("In progress...")
     data = sheet_gspread.get_all_records()
     id=len(data)+1
     item=[id,datetime.now().strftime("%Y-%m-%d"),datetime.now().strftime("%H:%M:%S"),type,name,price]
     new=sheet_gspread.append_row(item)
+    print("Done")
     return new
     
-def remove_sheet(L):
+def remove_row(L):
     updated_data = sheet_gspread.get_all_records()
     row_index = None
     for i, row in enumerate(updated_data, start=2):
@@ -40,7 +41,7 @@ def remove_sheet(L):
         sheet_gspread.update_cell(new_id + 1, 1, new_id)
     
 
-def update_sheet(row_id, type, name, price):
+def update_row(row_id, type, name, price):
     data = sheet_gspread.get_all_records()
 
     row_index = None
@@ -60,8 +61,11 @@ def update_sheet(row_id, type, name, price):
 
     
 # print(update_row_in_sheet(L))
-# print(remove_sheet(1))
-# print(add_sheet("drink","bitch","free"))
-# print(update_sheet(2,"food","pizza","91"))
+# remove_sheet(i)
+add_row("drink","coca","free")
+# print(update_row(2,"food","pizza","91"))
+
+
+
 
 
