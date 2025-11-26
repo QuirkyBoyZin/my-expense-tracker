@@ -1,5 +1,5 @@
 import sheets
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def retrieve_items() -> list:
     result = sheets.sheet.values().get(spreadsheetId=sheets.sheet_id,range = sheets.DATA_RANGE).execute()
@@ -8,18 +8,19 @@ def get_data(date: str):
     rows = retrieve_items()
     return [r for r in rows if len(r) > 1 and r[1] == date]
 def data_range(start_date: str, end_date: str):
-    s = datetime(start_date, "%Y-%m-%d" )
-    e = datetime(end_date, "%Y-%m-%d" )
+    s = datetime.strptime(start_date, "%Y-%m-%d")
+    e = datetime.strptime(end_date, "%Y-%m-%d")
     while s <= e:
         yield s.strftime("%Y-%m-%d")
-        s += sheets.timedelta(days=1)
-def get_data_from(date1,date2):
-    row = retrieve_items()
-    result = []
-    for d in data_range(date1,date2):
-        filtered =[r for r in row if len(row) > 1 and r[1] == d]
+        s += timedelta(days=1)
+
+def get_data_from(date1: str, date2: str):
+    rows = retrieve_items()
+    result = {}
+    for d in data_range(date1, date2):
+        filtered = [r for r in rows if len(r) > 1 and r[1] == d]
         if filtered:
-           result[d] = filtered 
+            result[d] = filtered
     return result
 def get_category(category):
     rows = retrieve_items()
