@@ -104,4 +104,4 @@ def handle_remove(response, all_expenses):
     if index < 1 or index > len(all_expenses):
         return "Index out of range."
 
-    return index - 1  # zero-based index for bot.py
+    return index - 1  
