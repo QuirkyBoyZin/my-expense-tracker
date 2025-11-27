@@ -11,14 +11,13 @@ from commands import (
 import responses
 
 load_dotenv()
-TOKEN         = os.getenv("BOT_TOKEN")
+TOKEN    = os.getenv("BOT_TOKEN")
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 bot = telebot.TeleBot(TOKEN)
 
 # This stores all expense entries
 # Format: [date, time, Expense object]
 expenses = []
-
 
 # -------------------------------------------------------------
 # /start
@@ -29,7 +28,6 @@ def start(message):
                  "👋 Hello! I'm your Expense Tracker Bot.\n"
                  "Use /help to see available commands.")
 
-
 # -------------------------------------------------------------
 # /help
 # -------------------------------------------------------------
@@ -38,7 +36,6 @@ def help(message):
     reply = handle_help(message.text)
     bot.reply_to(message, reply)
 
-
 # -------------------------------------------------------------
 # /add
 # -------------------------------------------------------------
@@ -46,16 +43,12 @@ def help(message):
 def add(message):
     result = handle_add(message.text)
 
-    # If result is a string => error
     if isinstance(result, str):
         bot.reply_to(message, result)
         return
 
-    # Otherwise valid, store it
     expenses.append(result)
-
     bot.reply_to(message, responses.SUCCESS)
-
 
 # -------------------------------------------------------------
 # /view
@@ -64,7 +57,6 @@ def add(message):
 def view(message):
     reply = handle_view(message.text, expenses)
     bot.reply_to(message, reply)
-
 
 # -------------------------------------------------------------
 # /change
@@ -80,7 +72,6 @@ def change(message):
     index, field = reply
     bot.reply_to(message, f"You want to change item #{index}, field: {field}")
 
-
 # -------------------------------------------------------------
 # /remove
 # -------------------------------------------------------------
@@ -92,11 +83,8 @@ def remove(message):
         bot.reply_to(message, reply)
         return
 
-    index, removed_item = reply
-    expenses.pop(index)
-
+    removed_item = expenses.pop(reply)[2]  # remove by index
     bot.reply_to(message, f"Removed: {removed_item.name} ✔")
-
 
 # -------------------------------------------------------------
 # /end
@@ -105,7 +93,6 @@ def remove(message):
 def end(message):
     expenses.clear()
     bot.reply_to(message, responses.ENDED)
-
 
 print("Bot is running...")
 bot.polling(none_stop=True)
