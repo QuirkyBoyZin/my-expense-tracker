@@ -1,17 +1,16 @@
-import sheets 
 from datetime import datetime
 
-def add_row (type,name,price):
+def add_row (type,name,price,sheet):
     print("In progress...")
-    data = sheets.sheet_gspread.get_all_records()
+    data = sheet.get_all_records()
     id=len(data)+1
     item=[id,datetime.now().strftime("%Y-%m-%d"),datetime.now().strftime("%H:%M:%S"),type,name,price]
-    new=sheets.sheet_gspread.append_row(item)
+    new=sheet.append_row(item)
     print("Done")
     return new
     
-def remove_row(L):
-    updated_data = sheets.sheet_gspread.get_all_records()
+def remove_row(L,sheet):
+    updated_data = sheet.get_all_records()
     row_index = None
     for i, row in enumerate(updated_data, start=2):
         if str(row["ID"]) == str(L):
@@ -19,15 +18,15 @@ def remove_row(L):
             break
     if row_index == None:
         return "ID is not found"
-    sheets.sheet_gspread.delete_rows(row_index)
+    sheet.delete_rows(row_index)
 
-    updated_data = sheets.sheet_gspread.get_all_records()
+    updated_data = sheet.get_all_records()
     for new_id, row in enumerate(updated_data, start=1):
-        sheets.sheet_gspread.update_cell(new_id + 1, 1, new_id)
+        sheet.update_cell(new_id + 1, 1, new_id)
     
 
-def update_row(row_id, type, name, price):
-    data = sheets.sheet_gspread.get_all_records()
+def update_row(row_id, type, name, price, sheet):
+    data = sheet.get_all_records()
 
     row_index = None
     for i, row in enumerate(data, start=2):
@@ -40,7 +39,7 @@ def update_row(row_id, type, name, price):
 
     new_row = [row_id,datetime.now().strftime("%Y-%m-%d"),datetime.now().strftime("%H:%M:%S"),type,name,price]
 
-    sheets.sheet_gspread.update(f"A{row_index}:F{row_index}", [new_row])
+    sheet.update(f"A{row_index}:F{row_index}", [new_row])
     return new_row
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import sheets
+from . import sheets
 from datetime import datetime, timedelta
 
 def retrieve_items() -> list:
@@ -43,4 +43,3 @@ def get_item(date_str, item_id):
 
 if __name__ == "__main__":
     pass
-  

@@ -8,7 +8,7 @@ from commands import (
     handle_change,
     handle_remove
 )
-import responses
+from . import responses
 
 load_dotenv()
 TOKEN    = os.getenv("BOT_TOKEN")
