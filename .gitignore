@@ -1,7 +1,8 @@
 .venv
 .env
 .vscode
-Credential.json
+credential.json
 
 __pycache__/
 *.pyc
+goof.py

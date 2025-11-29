@@ -33,6 +33,7 @@ def get_category(category):
                 except ValueError:
                     pass
     return price
+
 def get_item(date_str, item_id):
     rows = get_data(date_str)   
     for r in rows:
@@ -41,10 +42,5 @@ def get_item(date_str, item_id):
     return None
 
 if __name__ == "__main__":
-    #   date = input("Enter date (YYYY-MM-DD): ")
-    #   print(get_data(date))
-    #   item_id = input("Enter ID: ")
-    #   print(get_item(date, item_data
-    print(get_data_from("2025-11-26", "2025-11-27"))
-    
-
+    pass
+  

@@ -105,3 +105,6 @@ def handle_remove(response, all_expenses):
         return "Index out of range."
 
     return index - 1  # zero-based index for bot.py
+
+if __name__ == "__main__":
+    pass

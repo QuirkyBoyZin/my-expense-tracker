@@ -21,3 +21,6 @@ service = build('sheets', 'v4', credentials=creds)
 sheet = service.spreadsheets()
 workbook = client.open_by_key(sheet_id)
 sheet_gspread = workbook.worksheet("expense_tracker")
+
+if __name__ == "__main__":
+    pass

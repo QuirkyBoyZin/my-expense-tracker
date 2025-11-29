@@ -96,3 +96,6 @@ def end(message):
 
 print("Bot is running...")
 bot.polling(none_stop=True)
+
+if __name__ == "__main__":
+    pass
