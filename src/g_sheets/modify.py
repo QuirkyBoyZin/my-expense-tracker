@@ -1,6 +1,7 @@
 from datetime import datetime
 
-def add_row (type,name,price,sheet):
+def add_row (sheet, type, name, price):
+    
     print("In progress...")
     data = sheet.get_all_records()
     id=len(data)+1
@@ -9,37 +10,36 @@ def add_row (type,name,price,sheet):
     print("Done")
     return new
     
-def remove_row(L,sheet):
-    updated_data = sheet.get_all_records()
-    row_index = None
-    for i, row in enumerate(updated_data, start=2):
-        if str(row["ID"]) == str(L):
-            row_index = i
-            break
-    if row_index == None:
-        return "ID is not found"
-    sheet.delete_rows(row_index)
-
-    updated_data = sheet.get_all_records()
-    for new_id, row in enumerate(updated_data, start=1):
-        sheet.update_cell(new_id + 1, 1, new_id)
+def remove_row(sheet, row_id, date ):
     
+    print('Removing...')
+    sheet.delete_rows(row_id)
+    print("Done")
+    
+    # Updating ID and formatting row after deletion
+    sheet_data = sheet.get_all_records()
+    for new_id, row in enumerate(sheet_data, start=1):
+        sheet.update_cell(new_id + 1, 1, new_id)
 
-def update_row(row_id, type, name, price, sheet):
+def update_row(sheet, row_id, new_type = None, new_name = None, new_price = None):
+    print("Updating...")
+    row_index = row_id + 1
     data = sheet.get_all_records()
+    row_data = data[row_id - 1]
+    
+    if new_name is not None:
+        row_data["Name"] = new_name
 
-    row_index = None
-    for i, row in enumerate(data, start=2):
-        if str(row["ID"]) == str(row_id):
-            row_index = i
-            break
+    if new_type is not None:
+        row_data["Name"] = new_type
+    
+    if new_price is not None:
+        row_data["Name"] = new_price
 
-    if row_index is None:
-        return None
-
-    new_row = [row_id,datetime.now().strftime("%Y-%m-%d"),datetime.now().strftime("%H:%M:%S"),type,name,price]
+    new_row = [row_id,  row_data["Date"],  row_data["Time"], row_data["Category"],row_data["Name"],row_data["Price"]]
 
     sheet.update(f"A{row_index}:F{row_index}", [new_row])
+    print("Done")
     return new_row
 
 if __name__ == "__main__":
