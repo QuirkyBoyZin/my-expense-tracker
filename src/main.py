@@ -10,6 +10,12 @@ from cmd_handlers import(
 from t_bot import responses
 
 expenses = []
+# -------------------------------------------------------------
+# Helper functions
+def is_error (reply, message) -> bool:
+    if isinstance(reply, str):
+        bot.reply_to(message, reply)
+        return True
 
 # -------------------------------------------------------------
 # /start
@@ -33,13 +39,12 @@ def help(message):
 # -------------------------------------------------------------
 @bot.message_handler(commands=['add'])
 def add(message):
-    result = handle_add(message.text)
+    reply = handle_add((message.text).split())
 
-    if isinstance(result, str):
-        bot.reply_to(message, result)
-        return
+    # Validate message
+    if is_error(reply, message): return None
 
-    expenses.append(result)
+    expenses.append(reply)
     bot.reply_to(message, responses.SUCCESS)
 
 # -------------------------------------------------------------
@@ -57,9 +62,8 @@ def view(message):
 def change(message):
     reply = handle_change(message.text, expenses)
 
-    if isinstance(reply, str):
-        bot.reply_to(message, reply)
-        return
+    # Validate message
+    if is_error(reply, message): return None
 
     index, field = reply
     bot.reply_to(message, f"You want to change item #{index}, field: {field}")
@@ -71,9 +75,8 @@ def change(message):
 def remove(message):
     reply = handle_remove(message.text, expenses)
 
-    if isinstance(reply, str):
-        bot.reply_to(message, reply)
-        return
+    # Validate message
+    if is_error(reply, message): return None
 
     removed_item = expenses.pop(reply)[2]  # remove by index
     bot.reply_to(message, f"Removed: {removed_item.name} ✔")
