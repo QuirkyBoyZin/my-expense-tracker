@@ -36,7 +36,7 @@ def handle_add(response):
     date = now.strftime("%Y-%m-%d")
     time = now.strftime("%H:%M:%S")
 
-    return [date, time, Expense(category, name, price)]
+    return [date, time, category, name, price]
 
 # -------------------------------------------------------------
 # /view

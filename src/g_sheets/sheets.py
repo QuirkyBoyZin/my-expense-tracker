@@ -19,7 +19,7 @@ DATA_RANGE = "A2:F"
 service = build('sheets', 'v4', credentials=creds)
 sheet = service.spreadsheets()
 workbook = client.open_by_key(sheet_id)
-sheet_gspread = workbook.worksheet("expense_tracker")
+sheet_gspread = workbook.worksheet("Sheet1")
 
 def add_row(category: str, name: str, price: float):
     modify.add_row(category, name, price, sheet_gspread)
