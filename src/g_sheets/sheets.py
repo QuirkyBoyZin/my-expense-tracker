@@ -1,6 +1,5 @@
 from . import modify 
 
-from models.expense import Expense
 import os
 from dotenv import load_dotenv
 import gspread
