@@ -17,33 +17,28 @@ def handle_help(response):
 # -------------------------------------------------------------
 # /add
 # -------------------------------------------------------------
-def handle_add(response):
-    args = response.split()
-
-    if len(args) < 4:
+def handle_add(expense: list) -> tuple|str:
+    if len(expense) < 4:
         return responses.MISSING_ARGUMENTS
 
-    category = args[1]
-    name = args[2]
+    category = expense[1]
+    name     = expense[2]
+    price    = expense[3] 
 
     # Validate price
     try:
-        price = float(args[3])
+        price = float(expense[3])
     except:
         return responses.INVALID_PRICE
 
-    now = datetime.now()
-    date = now.strftime("%Y-%m-%d")
-    time = now.strftime("%H:%M:%S")
-
-    return [date, time, category, name, price]
+    return (category, name, price)
 
 # -------------------------------------------------------------
 # /view
 # -------------------------------------------------------------
 def handle_view(response, all_expenses):
-    args = response.split()
-    date_filter = args[1].strip() if len(args) > 1 else None  # optional date
+    expense = response.split()
+    date_filter = expense[1].strip() if len(expense) > 1 else None  # optional date
 
     filtered = []
     for item in all_expenses:
@@ -65,21 +60,21 @@ def handle_view(response, all_expenses):
 # /change
 # -------------------------------------------------------------
 def handle_change(response, all_expenses):
-    args = response.split()
+    expense = response.split()
 
-    if len(args) < 3:
+    if len(expense) < 3:
         return f"{handle_view(response, all_expenses)}\nUsage: /change <index> <name|price>"
 
     # convert index to int
     try:
-        index = int(args[1])
+        index = int(expense[1])
     except:
         return "Index must be a number."
 
     if index < 1 or index > len(all_expenses):
         return "Index out of range."
 
-    field = args[2].lower()
+    field = expense[2].lower()
 
     if field not in ["name", "price"]:
         return "Choose either 'name' or 'price'."
@@ -90,13 +85,13 @@ def handle_change(response, all_expenses):
 # /remove by index
 # -------------------------------------------------------------
 def handle_remove(response, all_expenses):
-    args = response.split()
+    expense = response.split()
 
-    if len(args) < 2:
+    if len(expense) < 2:
         return "Usage: /remove <index>"
 
     try:
-        index = int(args[1])
+        index = int(expense[1])
     except:
         return "Index must be a number."
 

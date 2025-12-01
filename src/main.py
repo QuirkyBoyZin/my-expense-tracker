@@ -43,9 +43,14 @@ def add(message):
 
     # Validate message
     if is_error(reply, message): return None
+    
+    # Turns reply to an expense if reply isn't a string
+    category = reply[0]
+    name     = reply[1]
+    price    = reply[2]
 
-    expenses.append(reply)
-    bot.reply_to(message, responses.SUCCESS)
+    sheets.add_row(category, name, price)                                  ##TODO: Use handle_view to show
+    bot.reply_to(message, f"Sucessfully added item into your expense list: {category}, {name}, {price}")
 
 # -------------------------------------------------------------
 # /view
@@ -92,3 +97,4 @@ def end(message):
 
 print("Bot is running...")
 bot.polling(none_stop=True)
+
