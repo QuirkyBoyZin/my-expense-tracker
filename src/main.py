@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 
 from g_sheets import sheets
 from t_bot.bot    import bot
@@ -15,6 +16,21 @@ date     = datetime.now().strftime("%Y-%m-%d")
 
 # -------------------------------------------------------------
 # Helper functions
+
+def measure_perf(base_fn):
+    """A decorator for measuring code execution time of a function"""
+    def wrapper(*args):
+        
+        start_time   = time.perf_counter()
+        result = base_fn(*args)
+        end_time     = time.perf_counter()
+        elasped_time = end_time - start_time
+        
+        # print(f"Execution time for {base_fn.__name__}: {elasped_time:.3f} Seconds")
+        return result
+       
+    return wrapper
+
 def is_error (reply, message) -> bool:
     """ Validate messages"""
     if isinstance(reply, str):
@@ -27,15 +43,16 @@ def view_expense() -> str:
     user_expense_list = handle_view(expense_list)
     return user_expense_list
 
+@measure_perf
 def find_id(args) -> bool|int:
     """ Given an index find the corresponding ID returns false if not found"""
     expense = sheets.get_expenses_at(date)
-    all_index = len(expense)
+
     index = int(args[1]) - 1
+    index_range = [i for i in range (len(expense))]
     
-    if index > all_index or index < 0:
-        return False
-    
+    if index not in index_range: return False
+        
     id =  int(expense[index][0])
     return id
 
@@ -50,10 +67,13 @@ def get_item(id) -> str:
     return f"{category.capitalize()} {name.capitalize()} {price}" 
 
 
+
+
 # -------------------------------------------------------------
 # /start
 # -------------------------------------------------------------
 @bot.message_handler(commands=['start'])
+@measure_perf
 def start(message):
     bot.reply_to(message,
                  "👋 Hello! I'm your Expense Tracker Bot.\n"
@@ -63,6 +83,7 @@ def start(message):
 # /help
 # -------------------------------------------------------------
 @bot.message_handler(commands=['help'])
+@measure_perf
 def help(message):
     reply = handle_help(message.text)
     bot.reply_to(message, reply)
@@ -82,14 +103,16 @@ def add(message):
     name     = reply[1]
     price    = reply[2]
 
-    sheets.add_row(category, name, price)                                  ##TODO: Use ✅  to show the recently added expense
-    bot.reply_to(message, f"Sucessfully added item into your expense list:\n\n{view_expense()}")
+    sheets.add_row(category, name, price)   
+    id = len(sheets.get_expenses_at(date))                                                ##TODO: Use ✅  to show the recently added expense
+    bot.reply_to(message, f"Sucessfully added item into your expense list:\n \t\t{get_item(id)}\n\n{view_expense()}")
 
 # -------------------------------------------------------------
 # /view: Provide a list of expense to the user 
 ## TODO:  Make it accepts an argument of a date and show the user the list of expense at that date
 # -------------------------------------------------------------
 @bot.message_handler(commands=['view'])
+@measure_perf
 def view(message):
     args = message.text.split()
     
@@ -104,6 +127,7 @@ def view(message):
 # /change
 # -------------------------------------------------------------
 @bot.message_handler(commands=['change'])
+@measure_perf
 def change(message):
     reply = handle_change(message.text)
 
@@ -117,6 +141,7 @@ def change(message):
 # /remove
 # -------------------------------------------------------------
 @bot.message_handler(commands=['remove'])
+@measure_perf
 def remove(message):
     args = message.text.split()
     
