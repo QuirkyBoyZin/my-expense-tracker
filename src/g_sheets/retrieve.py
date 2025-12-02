@@ -43,11 +43,11 @@ def get_category(category):
                     pass
     return price
 
-def get_item(date_str, item_id):
-    rows = get_data(date_str)   
-    for r in rows:
-        if r[0] == item_id:
-            return [r[3], r[4], r[5]]
+def get_item(id, sheet, sheet_id, DATA_RANGE):
+    rows = retrieve_items(sheet, sheet_id, DATA_RANGE) 
+    for row in rows:
+        if int(row[0]) == id:
+            return [row[3], row[4], row[5]]
     return None
 
 if __name__ == "__main__":

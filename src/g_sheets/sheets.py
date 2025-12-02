@@ -34,8 +34,8 @@ sheet_gspread = workbook.worksheet("Sheet1")
 def add_row(category: str, name: str, price: float):
     modify.add_row(sheet_gspread, category, name, price)
 
-def remove_row():
-    pass
+def remove_row(id: int):
+    modify.remove_row(sheet_gspread, id)
 
 def change_row():
     pass
@@ -48,7 +48,8 @@ def get_all_expenses() -> list:
 def get_expenses_at(date: str) -> list: 
     return retrieve.get_data(date, sheet, sheet_id, DATA_RANGE)
     
-    
+def get_item(id: int):
+    return retrieve.get_item(id, sheet, sheet_id, DATA_RANGE)
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ def add_row (sheet, type, name, price):
     print("Done")
     return new
     
-def remove_row(sheet, row_id, date ):
+def remove_row(sheet, row_id ):
     
     print('Removing...')
     sheet.delete_rows(row_id)

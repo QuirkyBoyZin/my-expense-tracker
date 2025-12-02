@@ -13,7 +13,6 @@ from t_bot import responses
 
 date     = datetime.now().strftime("%Y-%m-%d")
 
-expenses = []
 # -------------------------------------------------------------
 # Helper functions
 def is_error (reply, message) -> bool:
@@ -27,6 +26,28 @@ def view_expense() -> str:
     expense_list      = sheets.get_expenses_at(date)
     user_expense_list = handle_view(expense_list)
     return user_expense_list
+
+def find_id(args) -> bool|int:
+    """ Given an index find the corresponding ID returns false if not found"""
+    expense = sheets.get_expenses_at(date)
+    all_index = len(expense)
+    index = int(args[1]) - 1
+    
+    if index > all_index or index < 0:
+        return False
+    
+    id =  int(expense[index][0])
+    return id
+
+def get_item(id) -> str:
+    """ Given an id returns a string consists of the item's category name and price"""
+    expense  =  sheets.get_item(id)
+    
+    category: str   =  expense[0]
+    name:     str   =  expense[1]
+    price:    float =  expense[2]
+    
+    return f"{category.capitalize()} {name.capitalize()} {price}" 
 
 
 # -------------------------------------------------------------
@@ -84,7 +105,7 @@ def view(message):
 # -------------------------------------------------------------
 @bot.message_handler(commands=['change'])
 def change(message):
-    reply = handle_change(message.text, expenses)
+    reply = handle_change(message.text)
 
     # Validate message
     if is_error(reply, message): return None
@@ -97,24 +118,29 @@ def change(message):
 # -------------------------------------------------------------
 @bot.message_handler(commands=['remove'])
 def remove(message):
-    reply = handle_remove(message.text, expenses)
-
-    # Validate message
-    if is_error(reply, message): return None
-
-    removed_item = expenses.pop(reply)[2]  # remove by index
-    bot.reply_to(message, f"Removed: {removed_item.name} ✔")
-
-# -------------------------------------------------------------
-# /end
-# -------------------------------------------------------------
-@bot.message_handler(commands=['end'])
-def end(message):
-    expenses.clear()
-    bot.reply_to(message, responses.ENDED)
-
+    args = message.text.split()
+    
+    # User didn't enter any arguments
+    if len(args) == 1:
+        bot.reply_to(message,f"What do you want to remove?\n\n{view_expense()}\nUsage: /remove <index>") 
+        return None
+    
+    id = find_id(args)
+   
+    if id is False:
+        bot.reply_to(message,f"Invalid index\n\n{view_expense()}\nUsage: /remove <index>") 
+        return None
+    
+    remove_item = get_item(id)
+    sheets.remove_row(id)
+    bot.reply_to(message,f"✅ Sucessfully removed:\n\n \t\t{remove_item} \n\n{view_expense()}") 
+    
+    return None
+    
 
 print("Bot is running...")
 bot.polling(none_stop=True)
 
 # print(sheets.get_expenses_at("2025-12-02"))
+# print(get_item(1))
+
