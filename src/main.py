@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from g_sheets import sheets
 from t_bot.bot    import bot
 from cmd_handlers import(
@@ -9,13 +11,23 @@ from cmd_handlers import(
 )
 from t_bot import responses
 
+date     = datetime.now().strftime("%Y-%m-%d")
+
 expenses = []
 # -------------------------------------------------------------
 # Helper functions
 def is_error (reply, message) -> bool:
+    """ Validate messages"""
     if isinstance(reply, str):
         bot.reply_to(message, reply)
         return True
+
+def view_expense() -> str:
+    """View expense for today"""
+    expense_list      = sheets.get_expenses_at(date)
+    user_expense_list = handle_view(expense_list)
+    return user_expense_list
+
 
 # -------------------------------------------------------------
 # /start
@@ -49,16 +61,23 @@ def add(message):
     name     = reply[1]
     price    = reply[2]
 
-    sheets.add_row(category, name, price)                                  ##TODO: Use handle_view to show
-    bot.reply_to(message, f"Sucessfully added item into your expense list: {category}, {name}, {price}")
+    sheets.add_row(category, name, price)                                  ##TODO: Use ✅  to show the recently added expense
+    bot.reply_to(message, f"Sucessfully added item into your expense list:\n\n{view_expense()}")
 
 # -------------------------------------------------------------
-# /view
+# /view: Provide a list of expense to the user 
+## TODO:  Make it accepts an argument of a date and show the user the list of expense at that date
 # -------------------------------------------------------------
 @bot.message_handler(commands=['view'])
 def view(message):
-    reply = handle_view(message.text, expenses)
-    bot.reply_to(message, reply)
+    args = message.text.split()
+    
+    # Validating input
+    if len(args) > 1:
+        bot.reply_to(message, "This command doesn't accept argument.\n Usage: /view")
+        return None
+    
+    bot.reply_to(message, view_expense())
 
 # -------------------------------------------------------------
 # /change
@@ -98,3 +117,4 @@ def end(message):
 print("Bot is running...")
 bot.polling(none_stop=True)
 
+# print(sheets.get_expenses_at("2025-12-02"))
