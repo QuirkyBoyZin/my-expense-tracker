@@ -1,4 +1,12 @@
+## comment when testing
+
 from . import modify 
+from . import retrieve
+
+## uncomment when testing
+
+# import modify
+# import retrieve
 
 import os
 from dotenv import load_dotenv
@@ -21,9 +29,27 @@ sheet = service.spreadsheets()
 workbook = client.open_by_key(sheet_id)
 sheet_gspread = workbook.worksheet("Sheet1")
 
-def add_row(category: str, name: str, price: float):
-    modify.add_row(category, name, price, sheet_gspread)
+# Modifying data: add, update, remove
 
+def add_row(category: str, name: str, price: float):
+    modify.add_row(sheet_gspread, category, name, price)
+
+def remove_row():
+    pass
+
+def change_row():
+    pass
+
+# Retrieving data
+
+def get_all_expenses() -> list:
+    return retrieve.retrieve_items(sheet, sheet_id, DATA_RANGE)
+
+def get_expenses_at(date: str) -> list: 
+    return retrieve.get_data(date, sheet, sheet_id, DATA_RANGE)
     
+    
+
+
 if __name__ == "__main__":
     pass

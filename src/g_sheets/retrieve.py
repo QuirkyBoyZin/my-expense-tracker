@@ -1,12 +1,20 @@
-from . import sheets
+# from . import sheets
+# from sheets import (
+#     sheet,
+#     sheet_id,
+#     DATA_RANGE
+# )
+
 from datetime import datetime, timedelta
 
-def retrieve_items() -> list:
-    result = sheets.sheet.values().get(spreadsheetId=sheets.sheet_id,range = sheets.DATA_RANGE).execute()
+def retrieve_items(sheet, sheet_id, data_range) -> list:
+    result = sheet.values().get(spreadsheetId=sheet_id,range = data_range).execute()
     return result.get("values", [])
-def get_data(date: str):
-    rows = retrieve_items()
+
+def get_data(date: str, sheet, sheet_id, data_range):
+    rows = retrieve_items(sheet, sheet_id, data_range)
     return [r for r in rows if len(r) > 1 and r[1] == date]
+
 def data_range(start_date: str, end_date: str):
     s = datetime.strptime(start_date, "%Y-%m-%d")
     e = datetime.strptime(end_date, "%Y-%m-%d")
@@ -22,6 +30,7 @@ def get_data_from(date1: str, date2: str):
         if filtered:
             result[d] = filtered
     return result
+
 def get_category(category):
     rows = retrieve_items()
     price = []
@@ -42,4 +51,9 @@ def get_item(date_str, item_id):
     return None
 
 if __name__ == "__main__":
+    # print(retrieve_items())
+    # print(get_data("2025-12-02"))
+    # print(sheets.sheet_gspread.get_all_records())
+    # print(retrieve_items())
+
     pass
