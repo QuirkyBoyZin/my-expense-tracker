@@ -36,25 +36,16 @@ def handle_add(expense: list) -> tuple|str:
 # -------------------------------------------------------------
 # /view
 # -------------------------------------------------------------
-def handle_view(response, all_expenses):
-    expense = response.split()
-    date_filter = expense[1].strip() if len(expense) > 1 else None  # optional date
+def handle_view(expense: list) -> str:
+    expense_list = ""
+    
+    for index, row in enumerate(expense, start= 1):
+        category = row[3]
+        name     = row[4]
+        price    = row[5]
+        expense_list += f"{index}. {category} {name} {price}\n"
 
-    filtered = []
-    for item in all_expenses:
-        date, _, exp = item
-        if not date_filter or date == date_filter:
-            filtered.append(item)
-
-    if not filtered:
-        return responses.EMPTY_LIST
-
-    output = ""
-    for i, item in enumerate(filtered, start=1):
-        _, _, exp = item  # ignore date/time
-        output += f"{i}. {exp.get_type()} {exp.get_name()} {exp.get_price()}$\n"
-
-    return output.strip()
+    return expense_list
 
 # -------------------------------------------------------------
 # /change
