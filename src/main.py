@@ -1,6 +1,7 @@
 from datetime import datetime
 import time
 
+from telebot import types
 from g_sheets import sheets
 from t_bot.bot    import bot
 from cmd_handlers import(
@@ -26,7 +27,7 @@ def measure_perf(base_fn):
         end_time     = time.perf_counter()
         elasped_time = end_time - start_time
         
-        # print(f"Execution time for {base_fn.__name__}: {elasped_time:.3f} Seconds")
+        print(f"Execution time for {base_fn.__name__}: {elasped_time:.3f} Seconds")
         return result
        
     return wrapper
@@ -36,7 +37,7 @@ def is_error (reply, message) -> bool:
     if isinstance(reply, str):
         bot.reply_to(message, reply)
         return True
-
+@measure_perf
 def view_expense() -> str:
     """View expense for today"""
     expense_list      = sheets.get_expenses_at(date)
@@ -55,10 +56,11 @@ def find_id(args) -> bool|int:
         
     id =  int(expense[index][0])
     return id
-
+@measure_perf
 def get_item(id) -> str:
     """ Given an id returns a string consists of the item's category name and price"""
     expense  =  sheets.get_item(id)
+   
     
     category: str   =  expense[0]
     name:     str   =  expense[1]
@@ -92,13 +94,9 @@ def help(message):
 # /add
 # -------------------------------------------------------------
 @bot.message_handler(commands=['add'])
+@measure_perf
 def add(message):
-    reply = handle_add((message.text).split())
-
-    # Validate message
-    if is_error(reply, message): return None
-    
-    # Turns reply to an expense if reply isn't a string
+    reply = message.text.split()
     category = reply[0]
     name     = reply[1]
     price    = reply[2]
@@ -129,13 +127,75 @@ def view(message):
 @bot.message_handler(commands=['change'])
 @measure_perf
 def change(message):
-    reply = handle_change(message.text)
+   args = message.text.split()
+   
+   # User didn't enter any arguments
+   if len(args) == 1:
+        bot.reply_to(message,f"Which item do you want to change?\n\n{view_expense()}\nUsage: /change <index>") 
+        return None
+   global id
+   id = int(args[1])
+  
+   
+   markup = types.InlineKeyboardMarkup(row_width=1)
+   
+   category = types.InlineKeyboardButton('Category', callback_data= 'category')
+   name     = types.InlineKeyboardButton('Name', callback_data= 'name')
+   price    = types.InlineKeyboardButton('Price', callback_data= 'price')
+   all      = types.InlineKeyboardButton('All', callback_data= 'all')
+   markup.add(category, name, price, all)
 
-    # Validate message
-    if is_error(reply, message): return None
+   bot.send_message(message.chat.id, f'What do you want change for {get_item(id)}?', reply_markup= markup)
 
-    index, field = reply
-    bot.reply_to(message, f"You want to change item #{index}, field: {field}")
+       
+def change_name(message):
+    name = message.text
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    yes    = types.InlineKeyboardButton('Category', callback_data= 'yes')
+    no     = types.InlineKeyboardButton('Name', callback_data= 'no')
+     
+    markup.add(yes,no)
+
+    bot.send_message(message.chat.id, f'Are you sure?', reply_markup= markup)
+    
+
+
+
+def confirm_name(message):
+     markup = types.InlineKeyboardMarkup(row_width=1)
+     yes    = types.InlineKeyboardButton('Category', callback_data= 'yes')
+     no     = types.InlineKeyboardButton('Name', callback_data= 'no')
+     
+     markup.add(yes,no)
+
+     bot.send_message(message.chat.id, f'Are you sure?', reply_markup= markup)
+
+
+
+@bot.callback_query_handler(func=lambda call: call.data == "name")
+@measure_perf
+def changed_name(callback):
+    bot.send_message(callback.message.chat.id, "Enter new name")
+    bot.register_next_step_handler(callback.message, change_name)
+        
+
+@bot.callback_query_handler(func=lambda call: call.data == "price")
+@measure_perf
+def change_price(callback):
+    bot.send_message(callback.message.chat.id, "Enter new price")
+
+@bot.callback_query_handler(func=lambda call: call.data == "yes")
+@measure_perf
+def confirm(callback):
+     bot.send_message(callback.message.chat.id, "nice")
+
+
+
+    
+   
+
+
+
 
 # -------------------------------------------------------------
 # /remove
@@ -164,7 +224,7 @@ def remove(message):
     
 
 print("Bot is running...")
-bot.polling(none_stop=True)
+bot.infinity_polling()
 
 # print(sheets.get_expenses_at("2025-12-02"))
 # print(get_item(1))

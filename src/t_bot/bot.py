@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import telebot
+from telebot import types
 from .commands import (
     handle_help,
     handle_add,
@@ -8,6 +9,7 @@ from .commands import (
     handle_change,
     handle_remove
 )
+
 from . import responses
 
 load_dotenv()
