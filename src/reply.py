@@ -2,17 +2,18 @@
 
 ### Warning message if user enter anything other than the list of commands that can be used
 
-WARNING = f"I can only that track your expense. Here is a list of commands you can use"
+WARNING = f"Here is a list of commands you can use"
 
 ### Using /start
 
-WELCOME = f"Hey, I am your expense tracker. Ready to log in?"
+WELCOME = f"I am your expense tracker. Ready to log in?"
 
 ### Using /add
 
 ADD_USAGE = ("Please enter your expense in this format:\n\n"
                "Format:  \t\t\t\t\t\t Type       Name      Price in (USD)\n"
                "Exmaple:       Food      Noodle           2.5" )
+
 
 def validate_add(condition: str, message: list) -> str:
     """ Validating /add cammand returns a validation message.\n
