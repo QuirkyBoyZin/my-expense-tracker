@@ -67,9 +67,17 @@ def command_handlers(message):
         bot.send_message(message.chat.id, reply.HELP)
         
         return
+
+
+### Users clicking on buttons
+@bot.callback_query_handler(func= lambda call: call.data in commands )
+@measure_perf
+def handle_btn(callback):
     
-
-
+    callback.message.text = callback.data # Changing the text attribute of message to commands (/add, /view...)
+    command_handlers(callback.message)    # So, we can reuse code from command_handlers
+       
+    
 
 
 
