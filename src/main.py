@@ -5,7 +5,9 @@ from helper import(
 )
 from command_handlers import(
     handle_start,
-    handle_add,
+    handle_add, 
+    handle_view,
+    handle_remove
 )
 from state import user_state
 
@@ -52,7 +54,9 @@ def command_handlers(message):
     elif message.text == "/remove":
         chat_id = message.chat.id
         user_state[chat_id] = "remove"   # ✅ set state
+        
         bot.send_message(message.chat.id, reply.REMOVE_USAGE )
+        bot.register_next_step_handler(message, handle_remove)
         
         return
     

@@ -5,18 +5,21 @@ def validate_add(expense, message, func) -> bool:
     """ Validate expense before adding if passes return true else send 
         a message to user about their mistake"""
 
+    # Missing arguments
     if  len(expense)  < 3:
 
         bot.send_message(message.chat.id, reply.validate_add("missing_args", expense))
         bot.register_next_step_handler(message, func)
         return
     
+    # Excessive arguments
     elif len(expense) > 3: 
         
         bot.send_message(message.chat.id, reply.validate_add("excessive_args", expense))
         bot.register_next_step_handler(message, func)
         return
     
+    # Checking if category is string, name is string and price is a float
     invalid_category = True
     invalid_name     = True
     invalid_price    = False
@@ -61,3 +64,9 @@ def validate_add(expense, message, func) -> bool:
     
     bot.send_message(message.chat.id, reply.validate_add('success', expense))
     return True
+
+def validate_remove(expense, message, func) -> bool:
+    """ Validate before removing if passes return true else send 
+        a message to user about their mistake"""
+    pass
+    
