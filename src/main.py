@@ -7,12 +7,11 @@ from command_handlers import(
     handle_start,
     handle_add,
 )
+from state import user_state
 
 commands= ['/start', '/add', '/view', '/remove','/change', '/help']
 
-
-
-                     
+  
 @bot.message_handler(func= lambda msg: msg.text not in commands)  # Validating Commands & Messages
 @measure_perf
 def warning(message):
@@ -38,9 +37,11 @@ def command_handlers(message):
     
     elif message.text == "/add":
         # Let user add their expense 
+        chat_id = message.chat.id
+        user_state[chat_id] = "add"   # ✅ set state
+        
         bot.send_message(message.chat.id, reply.ADD_USAGE )
         bot.register_next_step_handler(message, handle_add)
-
         return
     
     elif message.text == "/view":
@@ -49,13 +50,16 @@ def command_handlers(message):
         return
     
     elif message.text == "/remove":
+        chat_id = message.chat.id
+        user_state[chat_id] = "remove"   # ✅ set state
         bot.send_message(message.chat.id, reply.REMOVE_USAGE )
         
         return
     
     elif message.text == "/change":
         bot.send_message(message.chat.id, reply.CHANGE_USAGE)
-        
+        chat_id = message.chat.id
+        user_state[chat_id] = "change"   # ✅ set state
         return
     
     elif message.text == "/help":
@@ -68,12 +72,19 @@ def command_handlers(message):
 @bot.callback_query_handler(func= lambda call: call.data in commands )
 @measure_perf
 def handle_btn(callback):
-    
-    callback.message.text = callback.data # Changing the text attribute of message to commands (/add, /view...)
-    command_handlers(callback.message)    # So, we can reuse code from command_handlers
-       
-    
 
+    chat_id = callback.message.chat.id
+    # check if this user is currently in an active flow
+    if user_state.get(chat_id) is None:
+        # user is free, proceed
+        callback.message.text = callback.data
+        command_handlers(callback.message)
+    else:
+        # user is mid-flow, block button
+        bot.answer_callback_query(callback.id,  "❗ Please finish this task first.")
+        
+           
+   
 
 
 print("Bot is running...")

@@ -23,7 +23,6 @@ def make_btns(*args) -> types.InlineKeyboardMarkup:
     container = types.InlineKeyboardMarkup(row_width=1)
     
     for command in args:
-        print(command)
         name: str = command[1:]
         btn = types.InlineKeyboardButton(name.capitalize(), callback_data= command)
         btns.append(btn)
