@@ -1,5 +1,6 @@
 from helper import(
-    view_expense
+    view_expense,
+    get_item
 )
 
 #### Constants or functions for replying message to user ####
@@ -69,7 +70,17 @@ VIEW_USAGE  = f"Here is your list of expenses for today\n"
 
 REMOVE= "Which item do you want to remove?"
 
-REMOVE_USAGE= "Enter an index from list to remove\n"
+REMOVE_USAGE= "Enter an ID from list to remove\n"
+
+def validate_remove(condition, message):
+    if condition == "text":
+         return f"Invalid ID: {message}. Please enter an ID"
+    
+    elif condition == "id":
+         return f"Invalid ID: {message} "
+    
+    elif condition == 'success':
+         return f"Sucessfully removed {get_item(int(message))} from your list"
 
 ### Using /change
 

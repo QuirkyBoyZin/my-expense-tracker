@@ -1,5 +1,8 @@
 import reply
 from t_bot.bot import bot
+from helper import(
+    find_id
+)
 
 def validate_add(expense, message, func) -> bool:
     """ Validate expense before adding if passes return true else send 
@@ -65,10 +68,28 @@ def validate_add(expense, message, func) -> bool:
     bot.send_message(message.chat.id, reply.validate_add('success', expense))
     return True
 
-def validate_remove(message, func) -> bool:
+def validate_remove(message, func) -> tuple[bool,int]:
     """ Validate before removing if passes return true else send 
         a message to user about their mistake"""
-    pass
     
-    # Checking if index is valid
+    # Checking if index is an int
+    invalid_index = False
+    try:
+        index = int(message.text)
+    except ValueError:
+        invalid_index = True
+
+    if invalid_index:
+        bot.send_message(message.chat.id, reply.validate_remove("text", message.text))
+        bot.register_next_step_handler(message, func)
+        return
+   
     # index must be [1, len(list of expense)]
+    (id, msg) = find_id(index)
+    if id is False:
+        bot.send_message(message.chat.id, reply.validate_remove("id", msg))
+        bot.register_next_step_handler(message, func)
+        return
+    
+    bot.send_message(message.chat.id, reply.validate_remove('success', message.text))
+    return (True, id)

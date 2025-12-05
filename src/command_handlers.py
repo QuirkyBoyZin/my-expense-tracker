@@ -6,8 +6,9 @@ from validate import(
 from buttons import (
     make_btns
 )
-from state import user_state
-from helper import view_expense
+from state   import user_state
+from g_sheets import sheets
+from helper   import view_expense
 
 
 commands = ('/add', '/view', '/remove','/change', '/help')
@@ -33,8 +34,9 @@ def handle_view(message):
 
 def handle_remove(message):
     chat_id = message.chat.id
-    valid = validate_remove(message, handle_remove)
+    (valid,id) = validate_remove(message, handle_remove)
     
     if valid:
         bot.send_message(message.chat.id, f'What do you want to do next?', reply_markup= make_btns(*commands))
         user_state.pop(chat_id, None)
+        sheets.remove_row(id)

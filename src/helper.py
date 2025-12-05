@@ -44,9 +44,31 @@ def view_expense() -> str:
     result = "```\n" + "\n" .join(lines)+ "\n```"
     return result
 
+def find_id(args: int) -> tuple[bool|str] :
+    """ Given an index find the corresponding ID returns false if not found"""
+    expense = sheets.get_expenses_at(date)
+    
+    max_index = len(expense)
+    index = int(args) - 1
+    index_range = [i for i in range (max_index)]
+    
+    msg = f"ID must be in between 1 and {max_index}" 
+    if index not in index_range: 
+        return (False, msg)
+        
+    id  =  int(expense[index][0])
+    return (id, None)
 
+def get_item(id: int) -> str:
+    """ Given an id returns a string consists of the item's category name and price"""
+    expense  =  sheets.get_item(id)
+    category: str   =  expense[0]
+    name:     str   =  expense[1]
+    price:    float =  expense[2]
+    
+    return f"{category.capitalize()} {name.capitalize()} {price}" 
 
 
 if __name__ == '__main__':
-    print(view_expense())
+    print(get_item(1))
     pass
