@@ -3,22 +3,23 @@ from validate import(
     validate_add
 )
 from buttons import (
-    next_step_btn
+    make_btns
 )
 
-def handle_warning(message):
-    bot.send_message(message.chat.id, f'Here are a list of commands you can use', reply_markup= next_step_btn('/start'))
-    return
+commands = ('/add', '/view', '/remove','/change', '/help')
 
 def handle_start(message):
-    bot.send_message(message.chat.id, f'Here are a list of commands you can use', reply_markup= next_step_btn(message.text))
+    bot.send_message(message.chat.id, f'Here are a list of commands you can use', reply_markup= make_btns(*commands)) 
     return
 
 
 def handle_add(message):
+
     expense = message.text.split()
-    validate_add(expense, message, handle_add)
+    valid = validate_add(expense, message, handle_add)
     
+    if valid:
+        bot.send_message(message.chat.id, f'What do you want to do next?', reply_markup= make_btns(*commands))
     return
     ## Add into database
 

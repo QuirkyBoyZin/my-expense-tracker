@@ -4,10 +4,6 @@ from telebot import types
 
 ### Buttons for interaction
 
-commands= ['/start', '/add', '/view', '/remove','/change', '/help']
-
-container = types.InlineKeyboardMarkup(row_width=1)
-
 add     = types.InlineKeyboardButton('Add',    callback_data= '/add')
 view    = types.InlineKeyboardButton('View',   callback_data= '/view')
 remove  = types.InlineKeyboardButton('Remove', callback_data= '/remove')
@@ -17,23 +13,27 @@ help    = types.InlineKeyboardButton('Help',   callback_data= '/help')
 btn = {'/add': add,'/view': view,'/remove': remove,'/change': change,'/help': help}
 
 
-def next_step_btn(current_command):
+def make_btns(*args) -> types.InlineKeyboardMarkup:
+    """
+        given an arbitrary of args\n
+        Makes button in a container with row width of 1\n
+        with the given args
+    """
+    btns = []
+    container = types.InlineKeyboardMarkup(row_width=1)
     
-    next_btns = []
-    next_commands = commands.copy() 
-    next_commands.remove(current_command)
-    for command in next_commands:
-        next_btns.append(btn[command])
-    
-    tuple(next_btns)    
-    return container.add(*next_btns)
-
+    for command in args:
+        print(command)
+        name: str = command[1:]
+        btn = types.InlineKeyboardButton(name.capitalize(), callback_data= command)
+        btns.append(btn)
+    tuple(btns)
+    return container.add(*btns)
 
 if __name__ == '__main__':
-    
-    # next_step_btn('/start')
-    # after_start = container.add(add,view,remove,change,help)
-    # after_start = next_step_btn('/start')
+    btns= ['/add', '/view', '/remove','/change', '/help']
+    make_btns(*btns)
+   
     pass
 
 

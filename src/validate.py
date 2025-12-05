@@ -1,7 +1,9 @@
 import reply
 from t_bot.bot import bot
 
-def validate_add(expense, message, func):
+def validate_add(expense, message, func) -> bool:
+    """ Validate expense before adding if passes return true else send 
+        a message to user about their mistake"""
 
     if  len(expense)  < 3:
 
@@ -58,4 +60,4 @@ def validate_add(expense, message, func):
         return
     
     bot.send_message(message.chat.id, reply.validate_add('success', expense))
-    return
+    return True

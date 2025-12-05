@@ -4,27 +4,20 @@ from helper import(
     measure_perf
 )
 from command_handlers import(
-    handle_warning,
     handle_start,
     handle_add,
 )
 
 commands= ['/start', '/add', '/view', '/remove','/change', '/help']
 
-###-------------Validating Commands & Messages----------------###
 
 
-def validate_message(message):
-    """ Check if a given message from user is a command or not."""
-    if message.text not in commands: return True
-        
-    return False
-
-@bot.message_handler(func = validate_message)
+                     
+@bot.message_handler(func= lambda msg: msg.text not in commands)  # Validating Commands & Messages
 @measure_perf
 def warning(message):
     """ Shows a list of command to use if a user enter non-commands text"""
-    handle_warning(message)
+    handle_start(message)
     return 
     
 
@@ -37,12 +30,14 @@ def warning(message):
 def command_handlers(message):
     
     if message.text == '/start':
+        # Welcomes user and show a list of commands to use
         bot.send_message(message.chat.id, reply.WELCOME)
         handle_start(message)
         
         return
     
     elif message.text == "/add":
+        # Let user add their expense 
         bot.send_message(message.chat.id, reply.ADD_USAGE )
         bot.register_next_step_handler(message, handle_add)
 
