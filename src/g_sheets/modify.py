@@ -13,7 +13,7 @@ def add_row (sheet, type, name, price):
 def remove_row(sheet, row_id ):
     
     print('Removing...')
-    sheet.delete_rows(row_id)
+    sheet.delete_rows(row_id + 1)
     print("Done")
     
     # Updating ID and formatting row after deletion
