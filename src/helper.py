@@ -1,5 +1,8 @@
 import time
+from datetime import datetime
+from g_sheets import sheets
 
+date     = datetime.now().strftime("%Y-%m-%d")
 
 def measure_perf(base_fn):
     """A decorator for measuring code execution time of a function"""
@@ -15,3 +18,35 @@ def measure_perf(base_fn):
        
     return wrapper
 
+def view_expense() -> str:
+    """View today's expenses with vertical price column in Telegram using monospace."""
+    
+    expenses = sheets.get_expenses_at(date)
+    
+    # Header
+    lines = [" "]
+
+    # Fixed column widths
+    index_width = 3
+    category_width = 10
+    name_width = 15
+    price_width = 6  # right-aligned
+
+    # Build lines
+    for index, row in enumerate(expenses, start=1):
+        category = row[3]
+        name = row[4]
+        price = row[5]
+        line = f"{index:<{index_width}} {category:<{category_width}} {name:<{name_width}} {price:>{price_width}}"
+        lines.append(line)
+
+    # Join lines and wrap in monospace formatting
+    result = "```\n" + "\n" .join(lines)+ "\n```"
+    return result
+
+
+
+
+if __name__ == '__main__':
+    print(view_expense())
+    pass

@@ -1,7 +1,8 @@
 from t_bot.bot    import bot
 import reply
 from helper import(
-    measure_perf
+    measure_perf,
+    view_expense
 )
 from command_handlers import(
     handle_start,
@@ -48,6 +49,7 @@ def command_handlers(message):
     
     elif message.text == "/view":
         bot.send_message(message.chat.id, reply.VIEW_USAGE )
+        bot.send_message(message.chat.id, view_expense(), parse_mode= "Markdown" )
         
         return
     

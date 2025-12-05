@@ -1,3 +1,7 @@
+from helper import(
+    view_expense
+)
+
 #### Constants or functions for replying message to user ####
 
 ### Warning message if user enter anything other than the list of commands that can be used
@@ -59,7 +63,7 @@ def validate_add(condition: str, message: list) -> str:
 
 ### Using /view
 
-VIEW_USAGE  = "Here is your list of expenses for today"
+VIEW_USAGE  = f"Here is your list of expenses for today\n"
 
 ### Using /remove
 
