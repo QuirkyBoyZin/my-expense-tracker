@@ -7,7 +7,7 @@ from buttons import (
     make_btns
 )
 from state import user_state
-
+from helper import view_expense
 
 
 commands = ('/add', '/view', '/remove','/change', '/help')
@@ -33,8 +33,7 @@ def handle_view(message):
 
 def handle_remove(message):
     chat_id = message.chat.id
-    expense = message.text.split()
-    valid = validate_remove(expense, message, handle_remove)
+    valid = validate_remove(message, handle_remove)
     
     if valid:
         bot.send_message(message.chat.id, f'What do you want to do next?', reply_markup= make_btns(*commands))

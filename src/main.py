@@ -57,6 +57,8 @@ def command_handlers(message):
         chat_id = message.chat.id
         user_state[chat_id] = "remove"   # ✅ set state
         
+        bot.send_message(message.chat.id, reply.REMOVE) 
+        bot.send_message(message.chat.id, view_expense(), parse_mode= "Markdown" )
         bot.send_message(message.chat.id, reply.REMOVE_USAGE )
         bot.register_next_step_handler(message, handle_remove)
         

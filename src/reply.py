@@ -67,7 +67,9 @@ VIEW_USAGE  = f"Here is your list of expenses for today\n"
 
 ### Using /remove
 
-REMOVE_USAGE = "Which item do you want to remove?\n"
+REMOVE= "Which item do you want to remove?"
+
+REMOVE_USAGE= "Enter an index from list to remove\n"
 
 ### Using /change
 

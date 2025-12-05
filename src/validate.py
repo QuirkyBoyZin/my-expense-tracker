@@ -65,8 +65,10 @@ def validate_add(expense, message, func) -> bool:
     bot.send_message(message.chat.id, reply.validate_add('success', expense))
     return True
 
-def validate_remove(expense, message, func) -> bool:
+def validate_remove(message, func) -> bool:
     """ Validate before removing if passes return true else send 
         a message to user about their mistake"""
     pass
     
+    # Checking if index is valid
+    # index must be [1, len(list of expense)]
